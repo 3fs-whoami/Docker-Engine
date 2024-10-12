@@ -1,0 +1,10 @@
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.579402005Z" level=info msg="Loading containers: done."
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596379093Z" level=warning msg="[DEPRECATION NOTICE]: API is accessible on http://10.2.2.10:2375 without encryption.\n         Access to the remote API is equivalent to root access on the host. Refer\n         to the 'Docker daemon attack surface' section in the documentation for\n         more information: https://docs.docker.com/go/attack-surface/\nIn future versions this will be a hard failure preventing the daemon from starting! Learn more at: https://docs.docker.com/go/api-security/"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596443012Z" level=warning msg="WARNING: IPv4 forwarding is disabled"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596451951Z" level=warning msg="WARNING: bridge-nf-call-iptables is disabled"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596456745Z" level=warning msg="WARNING: bridge-nf-call-ip6tables is disabled"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596500653Z" level=info msg="Docker daemon" commit=41ca978 containerd-snapshotter=false storage-driver=overlay2 version=27.3.1
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.596550582Z" level=info msg="Daemon has completed initialization"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.624917361Z" level=info msg="API listen on 10.2.2.10:2375"
+Oct 12 03:43:21 openstack dockerd[2337]: time="2024-10-12T03:43:21.624999237Z" level=info msg="API listen on /run/docker.sock"
+Oct 12 03:43:21 openstack systemd[1]: Started Docker Application Container Engine.
