@@ -1,35 +1,47 @@
 #!/bin/bash
 
-# Update package index
-sudo apt-get update
+# Variables for certificate paths and config
+CERT_DIR="/etc/docker/certs"
+DOCKER_CONFIG="/etc/docker/daemon.json"
+SYSCTL_CONFIG="/etc/sysctl.conf"
 
-# Install necessary packages
-sudo apt-get install -y ca-certificates curl
+# Ensure the script is run as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root!" 
+   exit 1
+fi
 
-# Create the directory for Docker's keyrings
-sudo install -m 0755 -d /etc/apt/keyrings
+# Step 1: Disable IPv4 forwarding
+echo "Disabling IPv4 forwarding..."
+sysctl -w net.ipv4.ip_forward=0
 
-# Download Docker's official GPG key
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+# Remove the IPv4 forwarding line from sysctl.conf if it exists
+sed -i '/net.ipv4.ip_forward = 1/d' $SYSCTL_CONFIG
 
-# Set the correct permissions for the GPG key
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+# Step 2: Disable bridge-nf-call-iptables and bridge-nf-call-ip6tables
+echo "Disabling bridge-nf-call-iptables and bridge-nf-call-ip6tables..."
+sysctl -w net.bridge.bridge-nf-call-iptables=0
+sysctl -w net.bridge.bridge-nf-call-ip6tables=0
 
-# Add Docker's repository to Apt sources
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Remove these settings from sysctl.conf if they exist
+sed -i '/net.bridge.bridge-nf-call-iptables = 1/d' $SYSCTL_CONFIG
+sed -i '/net.bridge.bridge-nf-call-ip6tables = 1/d' $SYSCTL_CONFIG
 
-# Update package index again to include Docker packages
-sudo apt-get update
+# Step 3: Remove TLS certificates and Docker daemon configuration
+echo "Removing Docker TLS certificates and resetting Docker configuration..."
 
-# Install Docker Engine and related components
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Remove certificates directory
+rm -rf $CERT_DIR
 
-# Verify Docker installation
-sudo docker --version
-sudo docker-compose --version
+# Reset Docker daemon configuration to default (empty or non-existent)
+if [ -f $DOCKER_CONFIG ]; then
+    rm $DOCKER_CONFIG
+fi
 
-echo "change user"
-sudo groupadd docker
-sudo usermod -aG docker $USER
+# Step 4: Restart Docker to apply changes
+echo "Restarting Docker to apply default configuration..."
+systemctl restart docker
 
-echo "Docker and related components have been installed successfully."
+# Final message
+echo "Docker has been reset to default configuration. Check the logs to ensure everything is back to normal."
+journalctl -u docker --since "5 minutes ago
