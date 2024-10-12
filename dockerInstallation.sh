@@ -28,4 +28,8 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo docker --version
 sudo docker-compose --version
 
+echo "change user"
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
 echo "Docker and related components have been installed successfully."
